@@ -1,0 +1,82 @@
+{
+  "name": "best-practice-video-squeeze",
+  "version": "1.1.0",
+  "description": "Локальный компрессор видео для Telegram от Best Practice AI.",
+  "private": true,
+  "main": "electron/main.cjs",
+  "author": "Ivan Salin · Best Practice",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "check": "node --check electron/main.cjs && node --check electron/preload.cjs && node --check src/renderer.js && node --check scripts/prepare-vendor.cjs",
+    "prepare:vendor": "node scripts/prepare-vendor.cjs",
+    "dist:mac": "npm run prepare:vendor -- mac && electron-builder --mac dmg zip --x64 --arm64",
+    "dist:win": "npm run prepare:vendor -- win && electron-builder --win nsis portable --x64",
+    "dist": "npm run prepare:vendor && electron-builder"
+  },
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@ffprobe-installer/ffprobe": "^2.1.2",
+    "@fontsource/lora": "^5.2.6",
+    "@fontsource/montserrat": "^5.2.6"
+  },
+  "devDependencies": {
+    "electron": "^37.0.0",
+    "electron-builder": "^26.0.0",
+    "tar": "^7.4.3"
+  },
+  "build": {
+    "appId": "ai.bestpractice.videosqueeze",
+    "productName": "Best Practice Video Squeeze",
+    "icon": "assets/brand/logo_blue-on-gold.png",
+    "artifactName": "BestPractice-Video-Squeeze-${version}-${os}-${arch}.${ext}",
+    "files": [
+      "electron/**/*",
+      "src/**/*",
+      "assets/**/*",
+      "package.json",
+      "LICENSE",
+      "THIRD_PARTY_NOTICES.md",
+      "!node_modules/@ffmpeg-installer/**/*",
+      "!node_modules/@ffprobe-installer/**/*",
+      "!node_modules/@fontsource/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "vendor/build",
+        "to": "bin",
+        "filter": ["**/*"]
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.video",
+      "target": [
+        { "target": "dmg", "arch": ["arm64", "x64"] },
+        { "target": "zip", "arch": ["arm64", "x64"] }
+      ],
+      "extendInfo": {
+        "NSHighResolutionCapable": true
+      }
+    },
+    "dmg": {
+      "title": "Best Practice Video Squeeze",
+      "backgroundColor": "#0B1D3A"
+    },
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "portable", "arch": ["x64"] }
+      ],
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Best Practice Video Squeeze",
+      "displayLanguageSelector": false
+    },
+    "publish": null
+  }
+}

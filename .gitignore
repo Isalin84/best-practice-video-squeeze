@@ -1,0 +1,11 @@
+.build/
+.DS_Store
+node_modules/
+dist/
+vendor/
+assets/fonts/
+*.log
+/Sources/
+/Info.plist
+/build_app.sh
+/Video Squeeze.app/

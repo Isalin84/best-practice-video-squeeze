@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0B1D3A" />
+  <title>Best Practice Video Squeeze</title>
+</head>
+<body>
+  <div class="app-shell">
+    <img class="gear-edge" src="../assets/brand/gear-edge_wide_gold.svg" alt="" aria-hidden="true" />
+
+    <header class="app-header">
+      <div class="brand-lockup">
+        <div class="brand-mark-plate">
+          <img src="../assets/brand/logo_blue-on-gold.png" alt="Best Practice" />
+        </div>
+        <div>
+          <p class="eyebrow">BEST PRACTICE AI · LOCAL TOOL</p>
+          <h1>Видео для Telegram</h1>
+          <p class="header-note">Сожмите запись экрана и сохраните детали, которые важны.</p>
+        </div>
+      </div>
+
+      <button class="studio-link" id="studioHeaderLink" type="button">
+        <span>Студия Best Practice</span>
+        <span aria-hidden="true">↗</span>
+      </button>
+    </header>
+
+    <main class="main-content">
+      <section class="workspace-grid" aria-label="Сжатие видео">
+        <article class="panel source-panel">
+          <div class="section-heading">
+            <img class="gear-number" src="../assets/brand/numeral_gear_01_gold.svg" alt="01" />
+            <div>
+              <p class="rubric">ИСХОДНИК</p>
+              <h2>Выберите видео</h2>
+            </div>
+          </div>
+
+          <div class="drop-zone" id="dropZone" tabindex="0" role="button" aria-label="Перетащите видео или выберите файл">
+            <img class="line-icon" src="../assets/brand/icon_video_gold.svg" alt="" aria-hidden="true" />
+            <h3>Перетащите видео сюда</h3>
+            <p>Подойдут MP4, MOV, MKV, WebM и другие форматы.</p>
+            <button class="button button-secondary" id="selectVideoButton" type="button">Выбрать файл</button>
+            <input id="videoInput" type="file" accept="video/*,.mkv,.avi,.m4v,.mpeg,.mpg" hidden />
+          </div>
+
+          <div class="source-ready" id="sourceReady" hidden>
+            <div class="file-row">
+              <div class="file-icon-wrap">
+                <img class="line-icon" src="../assets/brand/icon_video_gold.svg" alt="" aria-hidden="true" />
+              </div>
+              <div class="file-copy">
+                <strong id="sourceName">—</strong>
+                <span id="sourcePath">—</span>
+              </div>
+              <button class="icon-button" id="clearSourceButton" type="button" aria-label="Убрать видео">×</button>
+            </div>
+            <div class="metric-row">
+              <div class="metric-chip"><strong id="sourceSize">—</strong><span>РАЗМЕР</span></div>
+              <div class="metric-chip"><strong id="sourceDuration">—</strong><span>ДЛИНА</span></div>
+              <div class="metric-chip"><strong id="sourceFrame">—</strong><span>КАДР</span></div>
+            </div>
+            <div class="file-destination">
+              <span>ВЫХОДНОЙ ФАЙЛ</span>
+              <strong id="outputName">—</strong>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel settings-panel">
+          <div class="section-heading">
+            <img class="gear-number" src="../assets/brand/numeral_gear_02_gold.svg" alt="02" />
+            <div>
+              <p class="rubric">ПАРАМЕТРЫ</p>
+              <h2>Настройте результат</h2>
+            </div>
+          </div>
+
+          <div class="field-block">
+            <div class="field-label">ПРОФИЛЬ</div>
+            <div class="preset-list" id="presetList">
+              <button class="preset-row" type="button" data-preset="telegramQuick">
+                <span class="radio-mark" aria-hidden="true"></span>
+                <span class="preset-copy"><strong>Telegram / быстро</strong><small>720p · отправка без ожидания</small></span>
+                <span class="preset-badge">БЫСТРЕЕ</span>
+              </button>
+              <button class="preset-row is-selected" type="button" data-preset="telegramBalanced">
+                <span class="radio-mark" aria-hidden="true"></span>
+                <span class="preset-copy"><strong>Telegram / баланс</strong><small>1080p · хороший баланс</small></span>
+                <span class="preset-badge">СОВЕТУЮ</span>
+              </button>
+              <button class="preset-row" type="button" data-preset="quality">
+                <span class="radio-mark" aria-hidden="true"></span>
+                <span class="preset-copy"><strong>Качество</strong><small>исходное разрешение · детали важнее</small></span>
+                <span class="preset-badge">ЧЁТЧЕ</span>
+              </button>
+              <button class="preset-row" type="button" data-preset="tiny">
+                <span class="radio-mark" aria-hidden="true"></span>
+                <span class="preset-copy"><strong>Минимальный файл</strong><small>480p · когда важен каждый мегабайт</small></span>
+                <span class="preset-badge">ЛЕГЧЕ</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="rule"></div>
+
+          <div class="two-fields">
+            <label class="select-field">
+              <span>ФОРМАТ</span>
+              <select id="formatSelect">
+                <option value="mp4">MP4 · Telegram</option>
+                <option value="webm">WebM · компактный</option>
+                <option value="mov">MOV · Apple</option>
+              </select>
+            </label>
+            <label class="select-field">
+              <span>КАДР</span>
+              <select id="resolutionSelect">
+                <option value="hd1080">До 1080p</option>
+                <option value="hd720">До 720p</option>
+                <option value="sd480">До 480p</option>
+                <option value="source">Как в исходнике</option>
+              </select>
+            </label>
+          </div>
+
+          <details class="advanced" open>
+            <summary><span class="summary-icon">+</span><span>Точная настройка</span></summary>
+            <div class="advanced-content">
+              <div class="quality-heading">
+                <span>Качество</span>
+                <strong id="qualityValue">CRF 23 · высокое качество</strong>
+              </div>
+              <input id="qualityRange" type="range" min="18" max="30" step="1" value="23" />
+              <div class="range-labels"><span>ЧЁТЧЕ</span><span>МЕНЬШЕ ФАЙЛ</span></div>
+              <label class="check-row">
+                <input id="audioToggle" type="checkbox" checked />
+                <span class="fake-check" aria-hidden="true"></span>
+                <span><strong>Сохранить звук</strong><small>AAC / Opus в зависимости от формата</small></span>
+              </label>
+            </div>
+          </details>
+
+          <div class="output-folder-row">
+            <div class="folder-mark"><img src="../assets/brand/icon_doc_gold.svg" alt="" aria-hidden="true" /></div>
+            <div class="folder-copy"><span>ПАПКА ВЫВОДА</span><strong id="outputFolder">Папка исходного видео</strong></div>
+            <button class="text-button" id="chooseFolderButton" type="button">Изменить</button>
+          </div>
+        </article>
+      </section>
+
+      <section class="result-panel" id="resultPanel" hidden>
+        <img class="registry-mark" src="../assets/brand/registry-mark_gold.svg" alt="" aria-hidden="true" />
+        <div class="result-icon-wrap"><img src="../assets/brand/icon_check_gold.svg" alt="" aria-hidden="true" /></div>
+        <div class="result-copy">
+          <p class="rubric">РЕЗУЛЬТАТ</p>
+          <h2>Сжатая копия готова</h2>
+          <p id="resultSummary">—</p>
+          <img class="signal-rule" src="../assets/brand/signal-rule_gold.svg" alt="" aria-hidden="true" />
+        </div>
+        <div class="result-number"><strong id="resultPercent">−0%</strong><span>РАЗМЕРА ФАЙЛА</span></div>
+        <button class="button button-secondary" id="revealButton" type="button">Показать в Finder</button>
+        <button class="button button-secondary" id="repeatButton" type="button">Сжать ещё раз</button>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <div class="footer-credit">Создано с Best Practice AI · <button id="studioFooterLink" type="button">bestpracticeai.ru ↗</button></div>
+      <div class="footer-slogan">Экспертиза. Инновации. <strong>Результат.</strong></div>
+    </footer>
+
+    <div class="action-bar">
+      <div class="status-area">
+        <span class="status-dot" id="statusDot"></span>
+        <div><strong id="statusText">Выберите видео, чтобы начать</strong><small id="statusNote">Файл останется на этом компьютере</small></div>
+        <div class="progress-track" id="progressTrack" hidden><div id="progressFill"></div></div>
+      </div>
+      <button class="button button-primary" id="compressButton" type="button" disabled><span aria-hidden="true">↯</span> Сжать видео</button>
+      <button class="button button-secondary stop-button" id="stopButton" type="button" hidden>Остановить</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="./renderer.js"></script>
+</body>
+</html>
