@@ -29,6 +29,8 @@ jobs:
         run: npm run check
       - name: Build DMG and ZIP
         run: npm run dist:mac
+      - name: Verify packaged tools
+        run: node scripts/check-bundle.cjs
       - name: Upload macOS artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -55,6 +57,8 @@ jobs:
         run: npm run check
       - name: Build NSIS and portable installers
         run: npm run dist:win
+      - name: Verify packaged tools
+        run: node scripts/check-bundle.cjs
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -82,7 +86,16 @@ jobs:
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'v1.1.0' }}
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'v1.2.0' }}
+          name: Video Squeeze 1.2.0
+          body: |
+            Исправлен выбор и перетаскивание видео. Новая иконка приложения.
+            FFmpeg включён в установщики; приложение работает локально.
+
+            macOS: выберите arm64 для Apple Silicon или x64 для Intel, откройте DMG и перенесите приложение в Applications.
+            Windows: setup.exe — установка с ярлыком; portable.exe — запуск без установки.
+
+            Сборки не подписаны сертификатами Apple Developer ID / Microsoft. macOS Gatekeeper и Windows SmartScreen могут показывать предупреждения.
           target_commitish: ${{ github.sha }}
           generate_release_notes: true
           files: release-files/*

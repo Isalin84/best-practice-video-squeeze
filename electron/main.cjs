@@ -69,7 +69,7 @@ function createWindow() {
     minWidth: 980,
     minHeight: 680,
     backgroundColor: '#0B1D3A',
-    title: 'Best Practice Video Squeeze',
+    title: 'Video Squeeze',
     autoHideMenuBar: true,
     webPreferences: {
       contextIsolation: true,
@@ -161,7 +161,7 @@ async function uniqueOutputPath(inputPath, outputDirectory, preset, extension) {
 }
 
 function buildCompressionArgs(inputPath, outputPath, settings) {
-  const maxWidth = {
+  const maxWidth = settings.resolution === 'source' ? null : {
     source: null,
     hd1080: 1920,
     hd720: 1280,
@@ -172,7 +172,7 @@ function buildCompressionArgs(inputPath, outputPath, settings) {
   // a 3852×2168 file may become 1919×1080, which libx264 rejects.
   const scale = maxWidth
     ? `scale=w=min(${maxWidth}\\,iw):h=-2:force_original_aspect_ratio=decrease:force_divisible_by=2`
-    : 'scale=w=iw:h=ih:force_divisible_by=2';
+    : 'scale=w=trunc(iw/2)*2:h=trunc(ih/2)*2';
 
   const args = [
     '-hide_banner',
@@ -238,6 +238,7 @@ function formatFfmpegError(stderr, code) {
 }
 
 async function compressVideo({ inputPath, outputDirectory, settings }) {
+  if (activeProcess) throw new Error('Дождитесь завершения текущего сжатия.');
   const ffmpeg = resolveBinary('ffmpeg');
   if (!ffmpeg) {
     throw new Error('FFmpeg не найден. Установите приложение заново или установите FFmpeg.');
@@ -328,6 +329,10 @@ ipcMain.handle('reveal-output', async (_event, filePath) => {
   if (filePath && fs.existsSync(filePath)) shell.showItemInFolder(filePath);
 });
 
+ipcMain.handle('open-output', async (_event, filePath) => {
+  if (filePath && fs.existsSync(filePath)) return shell.openPath(filePath);
+});
+
 ipcMain.handle('open-studio', () => shell.openExternal(STUDIO_URL));
 ipcMain.handle('get-runtime-info', () => ({
   ffmpeg: Boolean(resolveBinary('ffmpeg')),
@@ -344,5 +349,7 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
+  app.quit();
 });
+
+app.on('before-quit', () => { if (activeProcess) activeProcess.kill(); });

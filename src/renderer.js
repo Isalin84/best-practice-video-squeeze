@@ -85,6 +85,7 @@ function refreshOutputName() {
 }
 
 function refreshControls() {
+  document.querySelectorAll('.settings-panel button, .settings-panel input, .settings-panel select, #clearSourceButton, #selectVideoButton, #repeatButton').forEach(el => { el.disabled = state.isCompressing; });
   const hasVideo = Boolean(state.selectedPath && state.metadata);
   $('compressButton').disabled = !hasVideo || state.isCompressing;
   $('compressButton').innerHTML = state.isCompressing ? '<span aria-hidden="true">◌</span> Сжимаю…' : '<span aria-hidden="true">↯</span> Сжать видео';
@@ -94,7 +95,7 @@ function refreshControls() {
 }
 
 async function loadVideo(filePath) {
-  if (!filePath) return;
+  if (!filePath || state.isCompressing) return;
   state.selectedPath = filePath;
   state.metadata = null;
   state.lastOutputPath = null;
@@ -188,18 +189,24 @@ async function compress() {
   }
 }
 
+async function selectVideo() {
+  if (state.isCompressing) return;
+  try { await loadVideo(await window.videoSqueeze.selectVideo()); }
+  catch (error) { showToast(error.message); }
+}
+
 function setupEvents() {
-  $('selectVideoButton').addEventListener('click', () => videoInput.click());
+  $('selectVideoButton').addEventListener('click', selectVideo);
   dropZone.addEventListener('click', (event) => {
     if (event.target.closest('button')) return;
-    videoInput.click();
+    selectVideo();
   });
   dropZone.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter' || event.key === ' ') videoInput.click();
+    if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectVideo(); }
   });
   videoInput.addEventListener('change', () => {
     const file = videoInput.files?.[0];
-    if (file?.path) loadVideo(file.path);
+    if (file) loadVideo(window.videoSqueeze.pathForFile(file));
   });
   ['dragenter', 'dragover'].forEach((eventName) => dropZone.addEventListener(eventName, (event) => {
     event.preventDefault(); dropZone.classList.add('is-dragging');
@@ -209,7 +216,7 @@ function setupEvents() {
   }));
   dropZone.addEventListener('drop', (event) => {
     const file = event.dataTransfer.files?.[0];
-    if (file?.path) loadVideo(file.path);
+    if (file) loadVideo(window.videoSqueeze.pathForFile(file));
   });
   $('clearSourceButton').addEventListener('click', clearVideo);
   document.querySelectorAll('.preset-row').forEach((row) => row.addEventListener('click', () => setPreset(row.dataset.preset)));
@@ -224,6 +231,7 @@ function setupEvents() {
   $('compressButton').addEventListener('click', compress);
   $('stopButton').addEventListener('click', async () => { await window.videoSqueeze.cancelCompression(); });
   $('revealButton').addEventListener('click', () => state.lastOutputPath && window.videoSqueeze.revealOutput(state.lastOutputPath));
+  $('openResultButton').addEventListener('click', () => state.lastOutputPath && window.videoSqueeze.openOutput(state.lastOutputPath));
   $('repeatButton').addEventListener('click', compress);
   $('studioHeaderLink').addEventListener('click', () => window.videoSqueeze.openStudio());
   $('studioFooterLink').addEventListener('click', () => window.videoSqueeze.openStudio());
@@ -231,6 +239,14 @@ function setupEvents() {
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
+  if (!window.videoSqueeze) {
+    document.querySelector('.app-shell').hidden = true;
+    const message = document.createElement('main');
+    message.style.cssText = 'max-width:640px;margin:15vh auto;padding:32px;line-height:1.7';
+    message.innerHTML = '<h1>Запустите Video Squeeze.app</h1><p>Это внутренний экран приложения. В браузере он не может выбирать и сжимать видео.</p><p>Откройте приложение «Video Squeeze» на рабочем столе или в папке Documents → Local VideoCompressor.</p>';
+    document.body.append(message);
+    return;
+  }
   setupEvents();
   setPreset(state.preset);
   refreshQuality();

@@ -51,6 +51,7 @@ async function packagePath(packageName) {
       '--pack-destination', tempRoot
     ], {
       cwd: root,
+      shell: process.platform === 'win32',
       stdio: ['ignore', 'pipe', 'inherit'],
       encoding: 'utf8'
     });
@@ -109,8 +110,8 @@ async function copyFonts() {
   for (const [target, ffmpegPackage, ffprobePackage] of targets) {
     if (!buildTargets.includes(target)) continue;
     const directory = path.join(vendorRoot, target);
-    await copyBinary(ffmpegPackage, path.join(directory, 'ffmpeg' + (target.startsWith('win32') ? '.exe' : '')));
-    await copyBinary(ffprobePackage, path.join(directory, 'ffprobe' + (target.startsWith('win32') ? '.exe' : '')));
+    if (!await copyBinary(ffmpegPackage, path.join(directory, 'ffmpeg' + (target.startsWith('win32') ? '.exe' : '')))) throw new Error(`Missing ffmpeg for ${target}`);
+    if (!await copyBinary(ffprobePackage, path.join(directory, 'ffprobe' + (target.startsWith('win32') ? '.exe' : '')))) throw new Error(`Missing ffprobe for ${target}`);
   }
   const buildRoot = path.join(vendorRoot, 'build');
   await fs.rm(buildRoot, { recursive: true, force: true });

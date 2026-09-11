@@ -1,6 +1,8 @@
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer, webUtils } = require('electron');
 
 contextBridge.exposeInMainWorld('videoSqueeze', {
+  pathForFile: (file) => webUtils.getPathForFile(file),
+  openOutput: (filePath) => ipcRenderer.invoke('open-output', filePath),
   selectVideo: () => ipcRenderer.invoke('select-video'),
   chooseOutputFolder: () => ipcRenderer.invoke('choose-output-folder'),
   analyzeVideo: (filePath) => ipcRenderer.invoke('analyze-video', filePath),

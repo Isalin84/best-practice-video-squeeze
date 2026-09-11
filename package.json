@@ -1,6 +1,6 @@
 {
   "name": "best-practice-video-squeeze",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Локальный компрессор видео для Telegram от Best Practice AI.",
   "private": true,
   "main": "electron/main.cjs",
@@ -28,7 +28,7 @@
   "build": {
     "appId": "ai.bestpractice.videosqueeze",
     "productName": "Best Practice Video Squeeze",
-    "icon": "assets/brand/logo_blue-on-gold.png",
+    "icon": "assets/app-icon.png",
     "artifactName": "BestPractice-Video-Squeeze-${version}-${os}-${arch}.${ext}",
     "files": [
       "electron/**/*",
@@ -67,15 +67,19 @@
         { "target": "nsis", "arch": ["x64"] },
         { "target": "portable", "arch": ["x64"] }
       ],
-      "signAndEditExecutable": false
+      "signAndEditExecutable": true
     },
     "nsis": {
+      "artifactName": "Video-Squeeze-${version}-windows-${arch}-setup.${ext}",
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "Best Practice Video Squeeze",
       "displayLanguageSelector": false
+    },
+    "portable": {
+      "artifactName": "Video-Squeeze-${version}-windows-${arch}-portable.${ext}"
     },
     "publish": null
   }
