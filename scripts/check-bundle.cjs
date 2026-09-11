@@ -8,6 +8,7 @@ const resources = process.platform === 'win32'
   ? path.resolve('dist/win-unpacked/resources')
   : path.resolve(`dist/${process.arch === 'arm64' ? 'mac-arm64' : 'mac'}/Best Practice Video Squeeze.app/Contents/Resources`);
 const archive = path.join(resources, 'app.asar');
+if (process.platform === 'darwin') execFileSync('codesign', ['--verify', '--deep', '--strict', path.dirname(path.dirname(resources))]);
 for (const name of ['src/index.html', 'src/styles.css', 'src/renderer.js', 'electron/preload.cjs', 'assets/app-icon.png']) {
   if (!asar.extractFile(archive, name).length) throw new Error(`Missing packaged asset: ${name}`);
 }
